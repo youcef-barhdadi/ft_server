@@ -1,0 +1,55 @@
+54 lines (39 sloc)  968 Bytes
+    
+server {
+	listen 80;
+	listen [::]:80;
+
+	root /var/www/localhost;
+
+	index index.php index.html index.htm index.nginx-debian.html;
+
+	server_name localhost www.localhost;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location /index/ {
+		autoindex on;
+	}
+
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+	}
+}
+
+server{
+	listen 443 ssl ;
+	listen [::]:443 ssl ;
+
+	ssl_certificate /root/CA/localhost.pem;
+	ssl_certificate_key /root/CA/localhost-key.pem;
+
+	root /var/www/localhost;
+
+	index index.php index.html index.htm index.nginx-debian.html;
+
+	server_name localhost www.localhost;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location /index/ {
+		autoindex on;
+	}
+
+	location ~ \.php$ {
+	    	try_files $uri =404;
+	    	fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+	    	fastcgi_index index.php;
+	    	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	    	include fastcgi_params;        
+	}
+}
